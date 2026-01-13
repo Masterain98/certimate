@@ -21,6 +21,7 @@ const AccessConfigFieldsProviderSynologyDSM = () => {
         name={[parentNamePath, "serverUrl"]}
         initialValue={initialValues.serverUrl}
         label={t("access.form.synologydsm_server_url.label")}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.synologydsm_server_url.tooltip") }}></span>}
         rules={[formRule]}
       >
         <Input type="url" placeholder={t("access.form.synologydsm_server_url.placeholder")} />
@@ -68,10 +69,11 @@ const AccessConfigFieldsProviderSynologyDSM = () => {
 
 const getInitialValues = (): Nullish<z.infer<ReturnType<typeof getSchema>>> => {
   return {
-    serverUrl: "http://<your-synology-ip>:5000/",
+    serverUrl: "",
     username: "",
     password: "",
     totpSecret: "",
+    allowInsecureConnections: false,
   };
 };
 

@@ -3,6 +3,7 @@ package deployers
 import (
 	"fmt"
 	"net/url"
+	"strconv"
 
 	"github.com/certimate-go/certimate/internal/domain"
 	"github.com/certimate-go/certimate/pkg/core/deployer"
@@ -31,8 +32,10 @@ func init() {
 
 		var port int32
 		if parsedURL.Port() != "" {
-			var portNum int
-			fmt.Sscanf(parsedURL.Port(), "%d", &portNum)
+			portNum, err := strconv.Atoi(parsedURL.Port())
+			if err != nil {
+				return nil, fmt.Errorf("failed to parse port number: %w", err)
+			}
 			port = int32(portNum)
 		}
 

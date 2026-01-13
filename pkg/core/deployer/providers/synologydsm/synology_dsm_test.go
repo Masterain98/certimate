@@ -19,7 +19,7 @@ var (
 	fScheme        string
 	fUsername      string
 	fPassword      string
-	fOTPCode       string
+	fTotpSecret    string
 	fInsecure      bool
 	fCertName      string
 	fCertID        string
@@ -36,7 +36,7 @@ func init() {
 	flag.StringVar(&fScheme, argsPrefix+"SCHEME", "https", "")
 	flag.StringVar(&fUsername, argsPrefix+"USERNAME", "", "")
 	flag.StringVar(&fPassword, argsPrefix+"PASSWORD", "", "")
-	flag.StringVar(&fOTPCode, argsPrefix+"OTPCODE", "", "")
+	flag.StringVar(&fTotpSecret, argsPrefix+"TOTPSECRET", "", "")
 	flag.BoolVar(&fInsecure, argsPrefix+"INSECURE", true, "")
 	flag.StringVar(&fCertName, argsPrefix+"CERTNAME", "", "")
 	flag.StringVar(&fCertID, argsPrefix+"CERTID", "", "")
@@ -70,7 +70,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("SCHEME: %v", fScheme),
 			fmt.Sprintf("USERNAME: %v", fUsername),
 			fmt.Sprintf("PASSWORD: %v", fPassword),
-			fmt.Sprintf("OTPCODE: %v", fOTPCode),
+			fmt.Sprintf("TOTPSECRET: %v", fTotpSecret),
 			fmt.Sprintf("INSECURE: %v", fInsecure),
 			fmt.Sprintf("CERTNAME: %v", fCertName),
 			fmt.Sprintf("CERTID: %v", fCertID),
@@ -83,7 +83,7 @@ func TestDeploy(t *testing.T) {
 			Scheme:                   fScheme,
 			Username:                 fUsername,
 			Password:                 fPassword,
-			OTPCode:                  fOTPCode,
+			TotpSecret:               fTotpSecret,
 			AllowInsecureConnections: fInsecure,
 			CertificateID:            fCertID,
 			CertificateName:          fCertName,

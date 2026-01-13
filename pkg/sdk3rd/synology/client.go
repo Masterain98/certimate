@@ -111,7 +111,10 @@ func (c *Client) Login(username, password, otpCode string) error {
 	}
 
 	if !loginResp.Success {
-		return fmt.Errorf("login failed: %s (error code: %d)", getAuthErrorDescription(loginResp.Error.Code), loginResp.Error.Code)
+		if loginResp.Error != nil {
+			return fmt.Errorf("login failed: %s (error code: %d)", getAuthErrorDescription(loginResp.Error.Code), loginResp.Error.Code)
+		}
+		return fmt.Errorf("login failed: unknown error")
 	}
 
 	c.sid = loginResp.Data.Sid
@@ -186,7 +189,10 @@ func (c *Client) ListCertificates() ([]Certificate, error) {
 	}
 
 	if !listResp.Success {
-		return nil, fmt.Errorf("list certificates failed with error code: %d", listResp.Error.Code)
+		if listResp.Error != nil {
+			return nil, fmt.Errorf("list certificates failed with error code: %d", listResp.Error.Code)
+		}
+		return nil, fmt.Errorf("list certificates failed: unknown error")
 	}
 
 	return listResp.Data.Certificates, nil
@@ -282,7 +288,10 @@ func (c *Client) ImportCertificate(certPEM, keyPEM, caPEM, certID, description s
 	}
 
 	if !importResp.Success {
-		return fmt.Errorf("import certificate failed with error code: %d", importResp.Error.Code)
+		if importResp.Error != nil {
+			return fmt.Errorf("import certificate failed with error code: %d", importResp.Error.Code)
+		}
+		return fmt.Errorf("import certificate failed: unknown error")
 	}
 
 	return nil
@@ -313,50 +322,6 @@ func (c *Client) queryAPIInfo() (map[string]APIInfo, error) {
 	}
 
 	return queryResp.Data, nil
-}
-
-// ExtractIntermediateCertificate extracts the intermediate certificate from a full chain PEM.
-func ExtractIntermediateCertificate(fullChainPEM string) string {
-	// The full chain typically contains:
-	// 1. Server certificate (first)
-	// 2. Intermediate certificate(s) (rest)
-	const certHeader = "-----BEGIN CERTIFICATE-----"
-	const certFooter = "-----END CERTIFICATE-----"
-
-	parts := strings.SplitAfter(fullChainPEM, certFooter)
-	if len(parts) <= 1 {
-		return ""
-	}
-
-	// Return everything after the first certificate
-	var intermediates []string
-	for i := 1; i < len(parts); i++ {
-		part := strings.TrimSpace(parts[i])
-		if strings.Contains(part, certHeader) {
-			intermediates = append(intermediates, part)
-		}
-	}
-
-	return strings.Join(intermediates, "\n")
-}
-
-// ExtractServerCertificate extracts only the server certificate (first certificate) from a full chain PEM.
-func ExtractServerCertificate(fullChainPEM string) string {
-	const certHeader = "-----BEGIN CERTIFICATE-----"
-	const certFooter = "-----END CERTIFICATE-----"
-
-	// Find the first certificate
-	startIdx := strings.Index(fullChainPEM, certHeader)
-	if startIdx == -1 {
-		return fullChainPEM
-	}
-
-	endIdx := strings.Index(fullChainPEM[startIdx:], certFooter)
-	if endIdx == -1 {
-		return fullChainPEM
-	}
-
-	return fullChainPEM[startIdx : startIdx+endIdx+len(certFooter)]
 }
 
 // getAuthErrorDescription returns a human-readable description for Synology DSM auth error codes.
@@ -441,7 +406,10 @@ func (c *Client) ListCertificatesWithServices() ([]CertificateWithServices, erro
 	}
 
 	if !listResp.Success {
-		return nil, fmt.Errorf("list certificates failed with error code: %d", listResp.Error.Code)
+		if listResp.Error != nil {
+			return nil, fmt.Errorf("list certificates failed with error code: %d", listResp.Error.Code)
+		}
+		return nil, fmt.Errorf("list certificates failed: unknown error")
 	}
 
 	return listResp.Data.Certificates, nil
@@ -524,7 +492,10 @@ func (c *Client) SetCertificateForAllServices(newCertID string, oldCertID string
 	}
 
 	if !setResp.Success {
-		return fmt.Errorf("set service certificate failed with error code: %d", setResp.Error.Code)
+		if setResp.Error != nil {
+			return fmt.Errorf("set service certificate failed with error code: %d", setResp.Error.Code)
+		}
+		return fmt.Errorf("set service certificate failed: unknown error")
 	}
 
 	return nil
