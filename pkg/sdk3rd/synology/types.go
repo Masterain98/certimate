@@ -43,7 +43,7 @@ type CertificateService struct {
 	Service         string `json:"service"`
 	Subscriber      string `json:"subscriber"`
 	MultipleCert    bool   `json:"multiple_cert,omitempty"`
-	UserSetable     bool   `json:"user_setable,omitempty"`
+	UserSettable    bool   `json:"user_setable,omitempty"`
 }
 
 // Certificate represents a certificate in Synology DSM.
